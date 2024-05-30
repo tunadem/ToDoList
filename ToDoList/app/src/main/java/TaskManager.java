@@ -1,6 +1,8 @@
 import java.util.ArrayList;
 import java.util.Collections;
 
+import javafx.collections.ObservableList;
+
 public class TaskManager {
 
     //arraylist to store the task objects
@@ -61,6 +63,7 @@ public class TaskManager {
 
     //listing methods 
     //list by time
+//Bzoulursa eskisi
     public ArrayList<Task> listByTime(){
         Collections.sort(taskList, new TaskComparator());
         return taskList;
@@ -76,5 +79,22 @@ public class TaskManager {
     public ArrayList<Task> listByDone(){
         Collections.sort(taskList, new TaskDone());
         return taskList;
+    }
+
+    public ObservableList<Task> listByTimeO(ObservableList<Task> tasks){
+        Collections.sort(tasks, new TaskComparator());
+        return tasks;
+    }
+
+    //list by importance
+    public ObservableList<Task> listByImportanceO(ObservableList<Task> tasks){
+        Collections.sort(tasks, new TaskImportance());
+        return tasks;
+    }
+
+    //list by undone
+    public ObservableList<Task> listByDoneO(ObservableList<Task> tasks){
+        Collections.sort(tasks, new TaskDone());
+        return tasks;
     }
 }

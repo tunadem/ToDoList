@@ -37,25 +37,11 @@ public class GUI extends Application {
         tm.addToList("ce214", "quiz", null, null, null, false);
         tm.addToList("eng210", "project", "21/02/2023", null, null, false);
         tm.addToList("ger202", "quiz", "21/02/2023", "22.00", null, false);
-        tm.addToList("ieu100", "online quiz", "21/02/2023", "23.00", "lesser", true);
-        tm.addToList("phy100", "online quiz", "21/02/2022", "21.00", "greater", true);
+        tm.addToList("ieu100", "online quiz", "21/02/2023", "23.00", "Low", true);
+        tm.addToList("phy100", "online quiz", "21/02/2022", "21.00", "High", true);
 
         // Root pane
         HBox root = new HBox();
-
-        // Left pane with search bar and add button
-        VBox leftPane = new VBox();
-        Label searchLabel = new Label("Search");
-        searchLabel.setStyle("-fx-font-size: 16px;");
-        TextField searchBar = new TextField();
-        searchBar.setPromptText("Search...");
-        searchBar.setStyle("-fx-font-size: 12px;");
-
-        // Create an HBox to hold the label and the text field
-        HBox searchBox = new HBox(8); // 5 pixels spacing between label and text field
-        searchBox.getChildren().addAll(searchLabel, searchBar);
-        // Add padding to the right of the text field to ensure it stops 10 to 8 pixels before the edge
-        searchBox.setPadding(new Insets(0, 0, 0, 12)); // 10 pixels padding on the right
 
         // ListView for tasks
         ListView<Task> listView = new ListView<>();
@@ -63,8 +49,49 @@ public class GUI extends Application {
         for (Task element : tm.getTaskList()) {
             tasks.add(element);
         }
+        tm.listByDoneO(tasks);
         listView.setItems(tasks);
         listView.setCellFactory(param -> new TaskCell());
+
+        // Left pane with search bar and add button
+        VBox leftPane = new VBox();
+        leftPane.setPrefWidth(400);
+        Label searchLabel = new Label("Search");
+        searchLabel.setStyle("-fx-font-size: 16px;");
+        TextField searchBar = new TextField();
+        searchBar.setPromptText("Search...");
+        searchBar.setStyle("-fx-font-size: 12px;");
+        Label sortLabel = new Label("Sort: ");
+        sortLabel.setStyle("-fx-font-size: 16px;");
+        ComboBox<String> sortBox = new ComboBox<>();
+        sortBox.getItems().addAll("Time", "Importance", "Undone");
+        //
+        sortBox.valueProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue.equals("Time")) {
+                tm.listByTimeO(tasks);
+                listView.setItems(tasks);
+                listView.setCellFactory(param -> new TaskCell());
+            }
+            if (newValue.equals("Importance")) {
+                tm.listByImportanceO(tasks);
+                listView.setItems(tasks);
+                listView.setCellFactory(param -> new TaskCell());
+            }
+            if (newValue.equals("Undone")) {
+                tm.listByDoneO(tasks);
+                listView.setItems(tasks);
+                listView.setCellFactory(param -> new TaskCell());
+            }
+        });
+        //
+
+        // Create an HBox to hold the label and the text field
+        HBox searchBox = new HBox(8); // 5 pixels spacing between label and text field
+        searchBox.getChildren().addAll(searchLabel, searchBar,sortLabel,sortBox);
+        // Add padding to the right of the text field to ensure it stops 10 to 8 pixels before the edge
+        searchBox.setPadding(new Insets(0, 0, 0, 12)); // 10 pixels padding on the right
+
+        // ListView for tasks
 
         Button addButton = new Button("Add");
         Button editButton = new Button("Edit");
@@ -84,6 +111,7 @@ public class GUI extends Application {
 
         // Right pane split horizontally
         VBox rightPane = new VBox();
+        rightPane.setPrefWidth(300);
         VBox upperRightPane = new VBox();
         VBox lowerRightPane = new VBox();
 
@@ -110,17 +138,14 @@ public class GUI extends Application {
         dateTextField.setStyle("-fx-font-size: 12px;");
         TextField timeTextField = new TextField();
         timeTextField.setEditable(false);
-        timeTextField.setStyle("-fx-font-size: 12x;");
+        timeTextField.setStyle("-fx-font-size: 12px;");
         ComboBox<String> comboBox = new ComboBox<>();
-        comboBox.getItems().addAll("Lesser", "Middle", "Greater");
+        comboBox.getItems().addAll("Low", "Middle", "High");
         //
-        // Add a listener to the ComboBox to get the selected option
         comboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
 
                 selectedTask.setImportance(newValue);
-                System.out.println(selectedTask.toString());
-                // You can also update other UI components or variables here
             }
         });
         //
@@ -155,7 +180,7 @@ public class GUI extends Application {
 
 
         // Set scene and stage
-        Scene scene = new Scene(root, 600, 600);
+        Scene scene = new Scene(root, 700, 600);
         primaryStage.setTitle("To-Do List");
         primaryStage.setScene(scene);
         primaryStage.show();
