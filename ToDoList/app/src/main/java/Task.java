@@ -17,11 +17,17 @@ public class Task {
 
     //object constructor
     public Task(String task,String description,String date,String time,String importance,boolean done) {
-        this.task=task;
-        this.description = description;
-        this.date=date;
-        this.time=time;
-        this.importance=importance;
+        if(task!=null)this.task=task;
+        else this.task="";
+        if(description!=null)this.description = description;
+        else this.description="";
+        if(date!=null)this.date=date;
+        else this.date="01/01/0001";
+        if(time!=null)this.time=time;
+        else this.time="00:00";
+        if(importance!=null)this.importance=importance;
+        else this.importance="";
+
         this.done=done;
         updateAllInfo();
     }
@@ -70,6 +76,7 @@ public class Task {
 
     //this method will used when seaching 
     public void updateAllInfo() {
+        allInfo.clear();
         if (task!=null) {
             for (String element : task.split("[ .]+")) {
                 element = element.toLowerCase();
@@ -85,20 +92,11 @@ public class Task {
 
     }
 
+
     // Method to parse date and time into a single Date object for easy comparison
     public Date getDateTime() throws ParseException {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH.mm");
-        if(date != null && time!=null){
-            return dateFormat.parse(date + " " + time);
-        }
-        else if(date != null){
-            return dateFormat.parse(date + " " + "00.01");
-        }
-        else if(time!=null){
-            return dateFormat.parse("01/11/9999" + " " + time);
-        } else {
-            return dateFormat.parse("01/11/9999" + " " + "00.01");
-        }
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+        return dateFormat.parse("01/11/9999" + " " + "00:01");
     }
     @Override
     public String toString() {

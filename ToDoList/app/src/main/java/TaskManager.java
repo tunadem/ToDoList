@@ -34,20 +34,25 @@ public class TaskManager {
         instance.getTaskList().remove(taskObject);
         instance.getTaskList().trimToSize();
     }
-    public void editList(Task taskObject ,String task,String description,String date,String time,String importance,boolean done) {
-        taskObject.setTask(task);
-        taskObject.setDescription(description);
-        taskObject.setDate(date);
-        taskObject.setTime(time);
-        taskObject.setImportance(importance);
-        taskObject.setDone(done);
+    public void editList(Task taskObject ,String task,String description,String date,String time) {
+
+        if(task!=null)taskObject.setTask(task);
+        else taskObject.setTask(task);
+        if(description!=null)taskObject.setDescription(description);
+        else taskObject.setDescription(description);
+        if(date!=null)taskObject.setDate(date);
+        else taskObject.setDate("01/01/0001");
+        if(time!=null)taskObject.setTime(time);
+        else taskObject.setTime("00:00");
+
+        taskObject.updateAllInfo();
     }
 
     //seach method
     public ArrayList<Task> searchTheList(String search) {
         search = search.toLowerCase();
         ArrayList<String> searchStr = new ArrayList<String>();
-        for (String element : search.split("[ .]+")) {
+        for (String element : search.split("[ :]+")) {
             searchStr.add(element);
         }
         ArrayList<Task> searchList = new ArrayList<Task>();

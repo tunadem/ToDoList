@@ -23,6 +23,9 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.scene.control.ToolBar;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 
 
 public class GUI extends Application {
@@ -36,9 +39,9 @@ public class GUI extends Application {
         tm.addToList("ce223", null, null, null, null, true);
         tm.addToList("ce214", "quiz", null, null, null, false);
         tm.addToList("eng210", "project", "21/02/2023", null, null, false);
-        tm.addToList("ger202", "quiz", "21/02/2023", "22.00", null, false);
-        tm.addToList("ieu100", "online quiz", "21/02/2023", "23.00", "Low", true);
-        tm.addToList("phy100", "online quiz", "21/02/2022", "21.00", "High", true);
+        tm.addToList("ger202", "quiz", "21/02/2023", "22:00", null, false);
+        tm.addToList("ieu100", "online quiz", "21/02/2023", "23:00", "Low", true);
+        tm.addToList("phy100", "online quiz", "21/02/2022", "21:00", "High", true);
 
         // Root pane
         HBox root = new HBox();
@@ -46,18 +49,20 @@ public class GUI extends Application {
         // ListView for tasks
         ListView<Task> listView = new ListView<>();
         ObservableList<Task> tasks = FXCollections.observableArrayList();
+        ObservableList<Task> searchedTasks = FXCollections.observableArrayList();
         for (Task element : tm.getTaskList()) {
             tasks.add(element);
         }
         tm.listByDoneO(tasks);
         listView.setItems(tasks);
+
         listView.setCellFactory(param -> new TaskCell());
 
         // Left pane with search bar and add button
         VBox leftPane = new VBox();
         leftPane.setPrefWidth(400);
-        Label searchLabel = new Label("Search");
-        searchLabel.setStyle("-fx-font-size: 16px;");
+        Button searchButton = new Button("Search");
+        searchButton.setStyle("-fx-font-size: 12px;");
         TextField searchBar = new TextField();
         searchBar.setPromptText("Search...");
         searchBar.setStyle("-fx-font-size: 12px;");
@@ -68,16 +73,22 @@ public class GUI extends Application {
         //
         sortBox.valueProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue.equals("Time")) {
+                listView.getItems().clear();
+                listView.setItems(tasks);
                 tm.listByTimeO(tasks);
                 listView.setItems(tasks);
                 listView.setCellFactory(param -> new TaskCell());
             }
             if (newValue.equals("Importance")) {
+                listView.getItems().clear();
+                listView.setItems(tasks);
                 tm.listByImportanceO(tasks);
                 listView.setItems(tasks);
                 listView.setCellFactory(param -> new TaskCell());
             }
             if (newValue.equals("Undone")) {
+                listView.getItems().clear();
+                listView.setItems(tasks);
                 tm.listByDoneO(tasks);
                 listView.setItems(tasks);
                 listView.setCellFactory(param -> new TaskCell());
@@ -87,7 +98,7 @@ public class GUI extends Application {
 
         // Create an HBox to hold the label and the text field
         HBox searchBox = new HBox(8); // 5 pixels spacing between label and text field
-        searchBox.getChildren().addAll(searchLabel, searchBar,sortLabel,sortBox);
+        searchBox.getChildren().addAll(searchButton, searchBar,sortLabel,sortBox);
         // Add padding to the right of the text field to ensure it stops 10 to 8 pixels before the edge
         searchBox.setPadding(new Insets(0, 0, 0, 12)); // 10 pixels padding on the right
 
@@ -105,7 +116,8 @@ public class GUI extends Application {
 
         // Adding components to the left pane
         leftPane.getChildren().addAll(searchBox,listView, addButton);
-        leftPane.setSpacing(10);
+        leftPane.setSpacing(8);
+        leftPane.setPadding(new Insets(0, 0, 5, 0));
 
 
 
@@ -176,6 +188,45 @@ public class GUI extends Application {
         root.getChildren().addAll(leftPane, rightPane);
         root.setSpacing(10);
         HBox.setHgrow(rightPane, Priority.ALWAYS);
+
+        editButton.setOnAction(event -> {
+            if ("Edit".equals(editButton.getText())) {
+                // Make the TextField editable and change button text to "Done"
+                
+                taskTextField.setEditable(true);
+                descriptionTextField.setEditable(true);
+                dateTextField.setEditable(true);
+                timeTextField.setEditable(true);
+                editButton.setText("Done");
+
+            } else {
+                // Call methodA, make the TextField not editable, and change button text to "Edit"
+                tm.editList(selectedTask, taskTextField.getText(), descriptionTextField.getText(), TaskComparator.dateValidation(dateTextField.getText()), TaskComparator.timeValidation(timeTextField.getText()));
+                
+                taskTextField.setEditable(false);
+                descriptionTextField.setEditable(false);
+                dateTextField.setEditable(false);
+                timeTextField.setEditable(false);
+                editButton.setText("Edit");
+            }
+        });
+        deleteButton.setOnAction(event -> {
+            tm.removeFromList(selectedTask);
+            tasks.remove(selectedTask);
+        });
+        searchButton.setOnAction(event -> {
+            if(!searchBar.getText().equals("")) {
+                searchedTasks.clear();
+                for (Task element : tm.searchTheList(searchBar.getText())) {
+                    searchedTasks.add(element);
+                }
+                tm.listByDoneO(searchedTasks);
+                listView.setItems(searchedTasks);
+        
+            } else {
+                listView.setItems(tasks);
+            }
+        });
 
 
 
