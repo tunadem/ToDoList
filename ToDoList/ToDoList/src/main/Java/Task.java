@@ -23,6 +23,7 @@ public class Task {
         this.time=time;
         this.importance=importance;
         this.done=done;
+        updateAllInfo();
     }
 
     //get-set methods
@@ -69,28 +70,45 @@ public class Task {
 
     //this method will used when seaching 
     public void updateAllInfo() {
-        for (String element : task.split("[ .]+")) {
-            allInfo.add(element);
+        if (task!=null) {
+            for (String element : task.split("[ .]+")) {
+                element = element.toLowerCase();
+                allInfo.add(element);
+            }
         }
-        for (String element : description.split("[ .]+")) {
-            allInfo.add(element);
+        if (description!=null) {
+            for (String element : description.split("[ .]+")) {
+                element = element.toLowerCase();
+                allInfo.add(element);
+            }
         }
-        allInfo.add(date);
-        allInfo.add(time);
+
     }
 
     // Method to parse date and time into a single Date object for easy comparison
     public Date getDateTime() throws ParseException {
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH.mm");
-        return dateFormat.parse(date + " " + time);
+        if(date != null && time!=null){
+            return dateFormat.parse(date + " " + time);
+        }
+        else if(date != null){
+            return dateFormat.parse(date + " " + "00.01");
+        }
+        else if(time!=null){
+            return dateFormat.parse("01/11/9999" + " " + time);
+        } else {
+            return dateFormat.parse("01/11/9999" + " " + "00.01");
+        }
     }
     @Override
     public String toString() {
         return "Task{" +
-                "date='" + date + '\'' +
-                ", time='" + time + '\'' +
-                ", importance='" + importance + '\'' +
-                '}';
-    }
-    
+            "task='" + task + '\'' +
+            ", description='" + description + '\'' +
+            ", date='" + date + '\'' +
+            ", time='" + time + '\'' +
+            ", importance='" + importance + '\'' +
+            ", done=" + done +
+            '}';
+    } 
 }

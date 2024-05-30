@@ -6,9 +6,10 @@ public class TaskImportance implements Comparator<Task> {
     private static final Map<String, Integer> importanceMap = new HashMap<>();
 
     static {
-        importanceMap.put("lesser", 1);
+        importanceMap.put("greater", 1);
         importanceMap.put("middle", 2);
-        importanceMap.put("greater", 3);
+        importanceMap.put("lesser", 3);
+        importanceMap.put(null, 4);
     }
 
     @Override
