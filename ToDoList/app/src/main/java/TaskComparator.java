@@ -95,7 +95,7 @@ public class TaskComparator implements Comparator<Task> {
             String part1 = parts[0];
             if(Integer.valueOf(part1) > 23) part1 = "23";
             String part2 = parts[1];
-            if(Integer.valueOf(part2) > 59) part1 = "59";
+            if(Integer.valueOf(part2) > 59) part2 = "59";
 
         return part1 + ":" + part2;
         }

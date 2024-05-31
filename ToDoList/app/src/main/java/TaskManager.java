@@ -48,7 +48,7 @@ public class TaskManager {
         taskObject.updateAllInfo();
     }
 
-    //seach method
+    //search method
     public ArrayList<Task> searchTheList(String search) {
         search = search.toLowerCase();
         ArrayList<String> searchStr = new ArrayList<String>();
