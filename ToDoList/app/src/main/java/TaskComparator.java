@@ -69,7 +69,7 @@ public class TaskComparator implements Comparator<Task> {
             String[] parts = input.split("/");
                     // Process each part according to the requirements
             String part1 = parts[0];
-            if(Integer.valueOf(part1) > 31) part1 = "31";
+            if(Integer.valueOf(part1) > 31) part1 = "29";
             if(Integer.valueOf(part1) < 1) part1 = "01";
             String part2 = parts[1];
             if(Integer.valueOf(part2) > 12) part2 = "12";

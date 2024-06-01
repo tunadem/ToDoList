@@ -27,7 +27,7 @@ public class Task {
         else this.time="00:00";
         if(importance!=null)this.importance=importance;
         else this.importance="";
-
+ 
         this.done=done;
         updateAllInfo();
     }
@@ -76,28 +76,32 @@ public class Task {
 
     //this method will used when seaching 
     public void updateAllInfo() {
-        allInfo.clear();
-        if (task!=null) {
-            for (String element : task.split("[ .]+")) {
-                element = element.toLowerCase();
-                allInfo.add(element);
+        if(allInfo!=null){allInfo.clear();
+            if (task!=null) {
+                for (String element : task.split("[ .]+")) {
+                    element = element.toLowerCase();
+                    if(!allInfo.contains(element)){allInfo.add(element);}
+                }
             }
-        }
-        if (description!=null) {
-            for (String element : description.split("[ .]+")) {
-                element = element.toLowerCase();
-                allInfo.add(element);
+            if (description!=null) {
+                for (String element : description.split("[ .]+")) {
+                    element = element.toLowerCase();
+                    if(!allInfo.contains(element)){allInfo.add(element);}
+                }
             }
-        }
 
+        }else {
+            allInfo.add("");
+        }
     }
 
 
     // Method to parse date and time into a single Date object for easy comparison
     public Date getDateTime() throws ParseException {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-        return dateFormat.parse("01/11/9999" + " " + "00:01");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        return dateFormat.parse(getDate());
     }
+
     @Override
     public String toString() {
         return "Task{" +

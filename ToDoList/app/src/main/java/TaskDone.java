@@ -18,7 +18,7 @@ public class TaskDone implements Comparator<Task> {
                 return Integer.compare(importance1, importance2);
             
         } catch (Exception e) {
-            throw new IllegalArgumentException("Invalid date or time format", e);
+            throw new IllegalArgumentException(e);
         }
     }
 }

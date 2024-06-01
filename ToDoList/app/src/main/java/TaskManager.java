@@ -1,5 +1,31 @@
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import java.io.FileReader;
+import java.io.IOException;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.lang.reflect.Type;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Paths;
+import java.util.List;
+
 
 import javafx.collections.ObservableList;
 
@@ -58,8 +84,10 @@ public class TaskManager {
         ArrayList<Task> searchList = new ArrayList<Task>();
         for (String selement : searchStr) {
             for (Task element : taskList) {
-                if (element.getAllInfo().contains(selement)){
-                    if(!searchList.contains(element)) {searchList.add(element);}
+                if(element.getAllInfo()!=null){
+                    if (element.getAllInfo().contains(selement)){
+                        if(!searchList.contains(element)) {searchList.add(element);}
+                    }
                 }
             }
         }
@@ -101,5 +129,87 @@ public class TaskManager {
     public ObservableList<Task> listByDoneO(ObservableList<Task> tasks){
         Collections.sort(tasks, new TaskDone());
         return tasks;
+    }
+    private List<Task> tasks;
+
+    // Constructor, getters, setters, and other methods...
+
+    /*public void loadTasksFromJson(String filePath) {
+        Gson gson = new GsonBuilder().create();
+        try (FileReader reader = new FileReader(filePath)) {
+            Task[] taskArray = gson.fromJson(reader, Task[].class);
+            tasks = new ArrayList<>(Arrays.asList(taskArray));
+        } catch (IOException e) {
+            e.printStackTrace(); // Handle or log the exception as needed
+        }
+    }*/
+    public void loadTasksFromJson() {
+        // Specify the file path relative to the project directory or use an absolute path
+        String jsonFileName = "tasks.json";
+        String filePath = Paths.get("TDL/json", jsonFileName).toString();
+        File file = new File(filePath);
+    
+        if (!file.exists()) {
+            // If the file doesn't exist, create it with an empty JSON array
+            writeEmptyJsonArray(filePath);
+        }
+    
+        try (FileReader reader = new FileReader(file, StandardCharsets.UTF_8)) {
+            Type type = new TypeToken<List<Task>>(){}.getType();
+            List<Task> taskList = new Gson().fromJson(reader, type);
+            instance.getTaskList().addAll(taskList);
+        } catch (IOException e) {
+            e.printStackTrace(); // Handle or log the exception as needed
+        }
+    }
+    
+    public void writeEmptyJsonArray(String filePath) {
+        // Create directories if they don't exist
+        File file = new File(filePath);
+        if (!file.getParentFile().exists()) {
+            file.getParentFile().mkdirs(); // Create parent directories if they don't exist
+        }
+    
+        try (OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8)) {
+            writer.write("[]");
+        } catch (IOException e) {
+            e.printStackTrace(); // Handle or log the exception as needed
+        }
+    }
+    public void writeTasksToJson(ArrayList<Task> tasks) {
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    
+        // Determine the file path relative to the current working directory
+        String jsonFileName = "/tasks.json";
+        String filePath = Paths.get("TDL/json", jsonFileName).toString();
+    
+        // Create directories if they don't exist
+        File file = new File(filePath);
+        if (!file.getParentFile().exists()) {
+            file.getParentFile().mkdirs(); // Create parent directories if they don't exist
+        }
+    
+        try (OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8)) {
+            gson.toJson(tasks, writer);
+        } catch (IOException e) {
+            e.printStackTrace(); // Handle or log the exception as needed
+        }
+    }
+    public void writeEmptyJsonArray() {
+        // Determine the file path relative to the build directory
+        String jsonFileName = "tasks.json";
+        String filePath = Paths.get("TDL/json", jsonFileName).toString();
+    
+        // Create directories if they don't exist
+        File file = new File(filePath);
+        if (!file.getParentFile().exists()) {
+            file.getParentFile().mkdirs(); // Create parent directories if they don't exist
+        }
+    
+        try (OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8)) {
+            writer.write("[]");
+        } catch (IOException e) {
+            e.printStackTrace(); // Handle or log the exception as needed
+        }
     }
 }

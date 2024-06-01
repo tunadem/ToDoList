@@ -9,6 +9,7 @@ public class TaskImportance implements Comparator<Task> {
         importanceMap.put("High", 1);
         importanceMap.put("Middle", 2);
         importanceMap.put("Low", 3);
+        importanceMap.put("", 4);
         importanceMap.put(null, 4);
     }
 
@@ -20,7 +21,7 @@ public class TaskImportance implements Comparator<Task> {
                 return Integer.compare(importance1, importance2);
             
         } catch (Exception e) {
-            throw new IllegalArgumentException("Invalid date or time format", e);
+            throw new IllegalArgumentException(e);
         }
     }
 }

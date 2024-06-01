@@ -1,6 +1,9 @@
+import java.io.File;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
-
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
 import javax.sql.rowset.spi.SyncResolver;
 
 import javafx.application.Application;
@@ -8,11 +11,13 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
@@ -25,6 +30,15 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javafx.scene.control.ToolBar;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.application.Application;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.scene.Scene;
+import javafx.scene.control.Hyperlink;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -79,12 +93,12 @@ public class GUI extends Application {
     private Label dateLabel = new Label("Date: ");
     private Label timeLabel = new Label("Time: ");
     private Label importanceLabel = new Label("Importance: ");
-    private Label sortLabelAdd = new Label("Sort: ");
     private Label taskLabelAdd = new Label("Task: ");
     private Label descriptionLabelAdd = new Label("Description: ");
     private Label dateLabelAdd = new Label("Date: ");
     private Label timeLabelAdd = new Label("Time: ");
     private Label importanceLabelAdd = new Label("Importance: ");
+    private Label prod = new Label("TD Production\n");
 
     // TextFields
     private TextField searchBar = new TextField();
@@ -92,7 +106,6 @@ public class GUI extends Application {
     private TextField descriptionTextField = new TextField();
     private TextField dateTextField = new TextField();
     private TextField timeTextField = new TextField();
-    private TextField searchBarAdd = new TextField();
     private TextField taskTextFieldAdd = new TextField();
     private TextField descriptionTextFieldAdd = new TextField();
     private TextField dateTextFieldAdd = new TextField();
@@ -103,17 +116,13 @@ public class GUI extends Application {
     private ComboBox<String> ImportanceComboAdd = new ComboBox<>();
     private ComboBox<String> SortCombo = new ComboBox<>();
 
+
     @Override
     public void start(Stage primaryStage) {
         
-        // Takes data from Gson and writes back
-        tm.addToList(null, null, null, null, null, true);
-        tm.addToList("ce223", null, null, null, null, true);
-        tm.addToList("ce214", "quiz", null, null, null, false);
-        tm.addToList("eng210", "project", "21/02/2023", null, null, false);
-        tm.addToList("ger202", "quiz", "21/02/2023", "22:00", null, false);
-        tm.addToList("ieu100", "online quiz", "21/02/2023", "23:00", "Low", true);
-        tm.addToList("phy100", "online quiz", "21/02/2022", "21:00", "High", true);
+        // Takes data from Gson 
+        String jsonPath = "src/main/resources/images/tasks.json";
+        tm.loadTasksFromJson();
 
         /*// root pane
         HBox hRootBox = new HBox();
@@ -167,6 +176,46 @@ public class GUI extends Application {
         ComboBox<String> ImportanceCombo = new ComboBox<>();
         ComboBox<String> SortCombo = new ComboBox<>();*/
 
+        // Define the file path to the image
+        /*String imagePath = "C:/Users/msı/OneDrive/Desktop/ToDoList/app/src/main/resources/images/edi.jpg";
+
+        // Create a File object
+        File file = new File(imagePath);
+
+        // Create an Image object from the file
+        Image image = new Image(file.toURI().toString());
+
+        // Create an ImageView to display the image
+        ImageView imageView = new ImageView(image);*/
+
+        String imagePath = "/images/edi.jpg";
+
+        // Load the image using the relative path
+        Image image = new Image(getClass().getResourceAsStream(imagePath));
+
+        // Create an ImageView to display the image
+        ImageView imageView = new ImageView(image);
+
+        imageView.setFitWidth(256); // Set the desired width, matching the image's width
+        imageView.setFitHeight(256); // Set the desired height, matching the image's height
+        imageView.setPreserveRatio(true); // Preserve the aspect ratio
+
+
+        Hyperlink link = new Hyperlink("Visit Github");
+
+        // Define the URL to open when the link is clicked
+        String url = "https://github.com/tunadem";
+
+        link.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent e) {
+                // Open the URL in the default web browser
+                getHostServices().showDocument(url);
+            }
+        });
+
+
+
         // Stage for adding tasks
         Stage dialog = new Stage();
         dialog.initModality(Modality.APPLICATION_MODAL);
@@ -205,25 +254,25 @@ public class GUI extends Application {
         
         SortCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue.equals("Time")) {
-                listView.getItems().clear();
+                //listView.getItems().clear();
                 listView.setItems(tasks);
                 tm.listByTimeO(tasks);
                 listView.setItems(tasks);
-                listView.setCellFactory(param -> new TaskCell());
+                //listView.setCellFactory(param -> new TaskCell());
             }
             if (newValue.equals("Importance")) {
-                listView.getItems().clear();
+                //listView.getItems().clear();
                 listView.setItems(tasks);
                 tm.listByImportanceO(tasks);
                 listView.setItems(tasks);
-                listView.setCellFactory(param -> new TaskCell());
+                //listView.setCellFactory(param -> new TaskCell());
             }
             if (newValue.equals("Undone")) {
-                listView.getItems().clear();
+                //listView.getItems().clear();
                 listView.setItems(tasks);
                 tm.listByDoneO(tasks);
                 listView.setItems(tasks);
-                listView.setCellFactory(param -> new TaskCell());
+                //listView.setCellFactory(param -> new TaskCell());
             }
         });
         //
@@ -244,6 +293,7 @@ public class GUI extends Application {
         descriptionTextField.setStyle("-fx-font-size: 12px;");
         dateTextField.setStyle("-fx-font-size: 12px;");
         timeTextField.setStyle("-fx-font-size: 12px;");
+        prod.setStyle("-fx-font-size: 12px;");
 
         // Setting TextFields editable
         taskTextField.setEditable(false);
@@ -275,6 +325,7 @@ public class GUI extends Application {
                 dateTextField.setEditable(false);
                 timeTextField.setEditable(false);
                 editButton.setText("Edit");
+                tm.writeTasksToJson(tm.getTaskList());
             }
         });
 
@@ -319,6 +370,11 @@ public class GUI extends Application {
             tm.listByDoneO(tasks);
             listView.setItems(tasks);
             dialog.close();
+            tm.writeTasksToJson(tm.getTaskList());
+        });
+        primaryStage.setOnCloseRequest(event -> {
+            // Writes back
+            tm.writeTasksToJson(tm.getTaskList());
         });
 
 
@@ -327,6 +383,9 @@ public class GUI extends Application {
 
         upperRightPane.getChildren().addAll(taskBox, descriptionBox,dateBox,timeBox,importanceBox,buttonBox);
         upperRightPane.setSpacing(15);
+
+        lowerRightPane.getChildren().addAll(imageView,prod,link);
+        lowerRightPane.setSpacing(7);
 
         leftPane.getChildren().addAll(searchBox,listView, addButton);
         leftPane.setSpacing(8);
@@ -407,12 +466,6 @@ public class GUI extends Application {
         launch(args);
     }
 
-    private void handleCloseRequest(WindowEvent event) {
-        taskTextField.setEditable(false);
-        descriptionTextField.setEditable(false);
-        dateTextField.setEditable(false);
-        timeTextField.setEditable(false);
-    }
 
 
 
